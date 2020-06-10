@@ -24,8 +24,8 @@ module.exports = app => {
 
       /* 详细信息 */
       realname: { type: String, select: false },												// 真实姓名
-      avatar_url: { type: String, select: false }, // 头像路径
-      cover_url: { type: String, select: false },													// 用户主页头图
+      avatar_url: { type: String },                                     // 头像路径
+      cover_url: { type: String },													            // 用户主页头图
       gender: { type: String, select: false },													// 性别 0、1、2
       birthday: { type: Date, select: false },													// 生日 - Moment对象
       professional: { type: String, select: false },													// 职业

@@ -26,7 +26,7 @@ class UserService extends Service {
         id: { type: 'string', required: true }, // id长度24
       },
     };
-    this.select = '+mobile +avatar_url +cover_url +city +location +blog +headline +tags +following_number +followers_number';
+    this.select = '+mobile +city +location +blog +headline +tags +following_number +followers_number';
   }
 
   /* ----------------------> 用户的增删改查 <---------------------- */

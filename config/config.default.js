@@ -47,7 +47,7 @@ module.exports = appInfo => {
 
   // mongodb
   exports.mongoose = {
-    url: Server.db.test,
+    url: Server.db.dev,
     options: { useFindAndModify: false },
     plugins: [],
   };
