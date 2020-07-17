@@ -22,14 +22,14 @@ class AccountController extends Controller {
   // 更新用户封面
   async cover() {
     const { ctx } = this;
-    const res = await ctx.service.account.del();
+    const res = await ctx.service.account.changeCover();
     ctx.helper.success({ ctx, res });
   }
 
   // 更新用户头像
   async avatar() {
     const { ctx } = this;
-    const res = await ctx.service.account.del();
+    const res = await ctx.service.account.changeAvatar();
     ctx.helper.success({ ctx, res });
   }
 

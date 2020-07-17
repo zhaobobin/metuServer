@@ -58,17 +58,18 @@ class AccountService extends Service {
   }
 
   // 更新用户封面
-  async cover() {
+  async changeCover() {
     const { ctx } = this;
-    const res = await this.findByIdAndUpdate(ctx.state.user._id, ctx.request.body, { new: true });
+    const res = await ctx.model.User.findByIdAndUpdate(ctx.state.user._id, ctx.request.body, { new: true });
     if (!res) ctx.throw(404, { error_key: 'user', message: '用户不存在' });
     return res;
   }
 
   // 更新用户头像
-  async avatar() {
+  async changeAvatar() {
     const { ctx } = this;
-    const res = await this.findByIdAndUpdate(ctx.state.user._id, ctx.request.body, { new: true });
+    const res = await ctx.model.User.findByIdAndUpdate(ctx.state.user._id, ctx.request.body, { new: true });
+    console.log(res)
     if (!res) ctx.throw(404, { error_key: 'user', message: '用户不存在' });
     return res;
   }
