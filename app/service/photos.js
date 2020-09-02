@@ -42,10 +42,10 @@ class PhotoService extends Service {
   }
 
   // 详情
-  async detail() {
+  async detail(id) {
     const { ctx } = this;
     const photo = await ctx.model.Photo.detail({
-      id: ctx.params.id,
+      id: id || ctx.params.id,
       select: '+images +topics',
       populate: 'author images topics',
     });
@@ -79,6 +79,26 @@ class PhotoService extends Service {
     delete photo._id;
     delete photo.author;
     return photo;
+  }
+
+  // 上一组
+  async prev() {
+    const { ctx } = this;
+
+    const list = await ctx.model.Photo.find({ _id: { $gt: ctx.params.id } }).sort({ _id: 1 }).limit(1);
+    if (!list || list.length === 0) ctx.throw(404, { error_key: 'photo', message: '已经没有了' });
+
+    return await this.detail(list[0]._id);
+  }
+
+  // 下一组
+  async next() {
+    const { ctx } = this;
+
+    const list = await ctx.model.Photo.find({ _id: { $lt: ctx.params.id } }).sort({ _id: -1 }).limit(1);
+    if (!list || list.length === 0) ctx.throw(404, { error_key: 'photo', message: '已经没有了' });
+
+    return await this.detail(list[0]._id);
   }
 
   // 创建

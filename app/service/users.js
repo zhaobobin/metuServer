@@ -57,10 +57,14 @@ class UserService extends Service {
         populate: 'tags city',
       });
     }
-    if (!user) ctx.throw(404, { error_key: 'user', message: '用户不存在' });
+    if (!user) {
+      ctx.throw(404, { error_key: 'user', message: '用户不存在' });
+    }
     if(ctx.state.user) {
       const me = await ctx.model.User.findById(ctx.state.user._id).select('+following')
-      if(me.following.map(id => id.toString()).includes(user._id)) user.following_state = 1
+      if (me.following.map(id => id.toString()).includes(user._id)) {
+        user.following_state = 1
+      }
     }
     user.mobile = ctx.helper.filterTel(user.mobile);
     return user;
@@ -83,7 +87,9 @@ class UserService extends Service {
       ctx.request.body.password = ctx.service.crypto.Decrypt(body.mobile, body.password);
     }
     const user = await ctx.model.User.add(ctx);
-    if (!user) ctx.throw(422, { error_key: 'user', message: '用户创建失败' });
+    if (!user) {
+      ctx.throw(422, { error_key: 'user', message: '用户创建失败' });
+    }
     return user;
   }
 
@@ -94,14 +100,18 @@ class UserService extends Service {
     ctx.validate(this.rule.update, body);
     if (body.nickname) {
       const user = await ctx.model.User.findOne({ nickname: body.nickname });
-      if (user && user._id.toString() !== ctx.state.user._id) ctx.throw(409, { error_key: 'nickname', message: '昵称已被占用' });
+      if (user && user._id.toString() !== ctx.state.user._id) {
+        ctx.throw(409, { error_key: 'nickname', message: '昵称已被占用' });
+      }
       const reg = new RegExp("[\\u4E00-\\u9FFF]+", "g"); // 如果用户名不含中文，则重新生成用户名
       if (!reg.test(body.nickname)) {
         body.username = body.nickname;
       }
     }
     const res = await ctx.model.User.update(ctx.params.id, body);
-    if (!res) ctx.throw(404, { error_key: 'user', message: '用户不存在' });
+    if (!res) {
+      ctx.throw(404, { error_key: 'user', message: '用户不存在' });
+    }
     return res;
   }
 
@@ -110,7 +120,9 @@ class UserService extends Service {
     const { ctx } = this;
     ctx.validate(this.rule.delete, ctx.params.id);
     const res = await ctx.model.User.del(ctx.params.id);
-    if (!res) ctx.throw(404, { error_key: 'user', message: '用户不存在' });
+    if (!res) {
+      ctx.throw(404, { error_key: 'user', message: '用户不存在' });
+    }
     return res;
   }
   /* ----------------------> 用户的增删改查 end! <---------------------- */
@@ -123,7 +135,9 @@ class UserService extends Service {
       .select('following following_number');
 
     // 我的关注列表不包含用户id时才关注
-    if (me.following.map(id => id.toString()).includes(ctx.params.id)) ctx.throw(403, { error_key: 'user', message: '不能重复关注' });
+    if (me.following.map(id => id.toString()).includes(ctx.params.id)) {
+      ctx.throw(403, { error_key: 'user', message: '不能重复关注' });
+    }
     me.following.push(ctx.params.id);
     me.following_number += 1;
     me.save();
@@ -145,7 +159,9 @@ class UserService extends Service {
 
     // 我的关注列表不包含用户id时才关注
     const index = me.following.map(id => id.toString()).indexOf(ctx.params.id);
-    if (index < 0) ctx.throw(403, { error_key: 'user', message: '不能重复取消' });
+    if (index < 0) {
+      ctx.throw(403, { error_key: 'user', message: '不能重复取消' });
+    }
     me.following.splice(index, 1);
     me.following_number -= 1;
     me.save();
@@ -184,7 +200,9 @@ class UserService extends Service {
       default: break;
     }
     const user = await ctx.model.User.queryFieldList({ id: ctx.params.id, query: ctx.query, field });
-    if (!user) ctx.throw(404, 'user 用户不存在');
+    if (!user) {
+      ctx.throw(404, 'user 用户不存在');
+    }
     return { list: user[field], count: user[field].length };
   }
 
@@ -202,7 +220,9 @@ class UserService extends Service {
       default: break;
     }
     const user = await ctx.model.User.queryFieldList({ id: ctx.params.id, query: ctx.query, field });
-    if (!user) ctx.throw(404, 'user 用户不存在');
+    if (!user) {
+      ctx.throw(404, 'user 用户不存在');
+    }
     return { list: user[field], count: user[field].length };
   }
 
@@ -223,7 +243,9 @@ class UserService extends Service {
       query: ctx.query,
       field,
     });
-    if (!user) ctx.throw(404, 'user 用户不存在');
+    if (!user) {
+      ctx.throw(404, 'user 用户不存在');
+    }
     return { list: user[field], count: user[field].length };
   }
 

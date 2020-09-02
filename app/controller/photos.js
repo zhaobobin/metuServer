@@ -26,6 +26,20 @@ class PhotoController extends Controller {
     ctx.helper.success({ ctx, res });
   }
 
+  // 上一组
+  async prev() {
+    const { ctx } = this;
+    const res = await ctx.service.photos.prev();
+    ctx.helper.success({ ctx, res });
+  }
+
+  // 下一组
+  async next() {
+    const { ctx } = this;
+    const res = await ctx.service.photos.next();
+    ctx.helper.success({ ctx, res });
+  }
+
   // 创建
   async create() {
     const { ctx } = this;

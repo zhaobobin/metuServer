@@ -70,13 +70,19 @@ class AccessService extends Service {
     const body = ctx.request.body;
     ctx.validate(this.rule.register, body);
 
-    if (!body.smscode) ctx.throw(403, { error_key: 'smscode', message: '验证码不能为空' });
+    if (!body.smscode) {
+      ctx.throw(403, { error_key: 'smscode', message: '验证码不能为空' });
+    }
 
     const res = await ctx.model.User.findOne({ $or: [{ mobile: body.mobile }, { nickname: body.nickname }] })
       .select('+mobile');
     if (res) {
-      if (body.mobile === res.mobile) ctx.throw(409, { error_key: 'mobile', message: '手机号已注册' });
-      if (body.nickname === res.nickname) ctx.throw(409, { error_key: 'nickname', message: '昵称已被占用' });
+      if (body.mobile === res.mobile) {
+        ctx.throw(409, { error_key: 'mobile', message: '手机号已注册' });
+      }
+      if (body.nickname === res.nickname) {
+        ctx.throw(409, { error_key: 'nickname', message: '昵称已被占用' });
+      }
     }
     await ctx.service.sms.verify({ mobile: body.mobile, smscode: body.smscode });
 
@@ -112,15 +118,21 @@ class AccessService extends Service {
       .select(`+password ${this.select}`)
       .lean()
       .exec();
-    if (!user) ctx.throw(404, { error_key: 'mobile', message: '手机号未注册' });
+    if (!user) {
+      ctx.throw(404, { error_key: 'mobile', message: '手机号未注册' });
+    }
 
     // 解密密码
     body.password = ctx.service.crypto.Decrypt(body.mobile, body.password);
-    if (!body.password) ctx.throw(401, { error_key: 'password', message: '登录密码错误' });
+    if (!body.password) {
+      ctx.throw(401, { error_key: 'password', message: '登录密码错误' });
+    }
 
     // 比对密码
     const verifyPsd = await ctx.compare(body.password, user.password);
-    if (!verifyPsd) ctx.throw(401, { error_key: 'password', message: '登录密码错误' });
+    if (!verifyPsd) {
+      ctx.throw(401, { error_key: 'password', message: '登录密码错误' });
+    }
 
     user.mobile = ctx.helper.filterTel(user.mobile);
     delete user.password;
@@ -138,7 +150,9 @@ class AccessService extends Service {
       .select(`+password ${this.select}`)
       .lean()
       .exec();
-    if (!user) ctx.throw(404, { error_key: 'mobile', message: '手机号未注册' });
+    if (!user) {
+      ctx.throw(404, { error_key: 'mobile', message: '手机号未注册' });
+    }
 
     if (user) {
       await ctx.service.sms.verify({ mobile: body.mobile, smscode: body.smscode });
@@ -159,7 +173,9 @@ class AccessService extends Service {
       id: ctx.state.user._id,
       select: this.select,
     });
-    if (!user) ctx.throw(404, { error_key: 'user', message: '用户不存在' });
+    if (!user) {
+      ctx.throw(404, { error_key: 'user', message: '用户不存在' });
+    }
     user.mobile = ctx.helper.filterTel(user.mobile);
     return user;
   }

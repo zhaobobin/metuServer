@@ -32,7 +32,9 @@ class AccountService extends Service {
       select: this.select,
       populate: 'tags city',
     });
-    if (!user) ctx.throw(404, { error_key: 'user', message: '用户不存在' });
+    if (!user) {
+      ctx.throw(404, { error_key: 'user', message: '用户不存在' });
+    }
     user.mobile = ctx.helper.filterTel(user.mobile);
 
     user.psd_bind = user.password ? 1 : 0;
@@ -53,7 +55,9 @@ class AccountService extends Service {
     const { ctx } = this;
     ctx.validate(this.rule.update, ctx.request.body);
     const res = await ctx.model.User.update(ctx.state.user._id, ctx.request.body);
-    if (!res) ctx.throw(404, { error_key: 'user', message: '用户不存在' });
+    if (!res) {
+      ctx.throw(404, { error_key: 'user', message: '用户不存在' });
+    }
     return res;
   }
 
@@ -61,7 +65,9 @@ class AccountService extends Service {
   async changeCover() {
     const { ctx } = this;
     const res = await ctx.model.User.findByIdAndUpdate(ctx.state.user._id, ctx.request.body, { new: true });
-    if (!res) ctx.throw(404, { error_key: 'user', message: '用户不存在' });
+    if (!res) {
+      ctx.throw(404, { error_key: 'user', message: '用户不存在' });
+    }
     return res;
   }
 
@@ -69,8 +75,9 @@ class AccountService extends Service {
   async changeAvatar() {
     const { ctx } = this;
     const res = await ctx.model.User.findByIdAndUpdate(ctx.state.user._id, ctx.request.body, { new: true });
-    console.log(res)
-    if (!res) ctx.throw(404, { error_key: 'user', message: '用户不存在' });
+    if (!res) {
+      ctx.throw(404, { error_key: 'user', message: '用户不存在' });
+    }
     return res;
   }
 
@@ -105,15 +112,19 @@ class AccountService extends Service {
     const body = ctx.request.body;
 
     const user = await ctx.model.User.findOne({ _id: ctx.state.user._id }).select('+password');
-    const oldPsd = ctx.service.crypto.Decrypt(ctx.state.user._id, body.oldPsd);
-    const newPsd = ctx.service.crypto.Decrypt(ctx.state.user._id, body.newPsd);
+    const oldPassword = ctx.service.crypto.Decrypt(ctx.state.user._id, body.oldPassword);
+    const newPassword = ctx.service.crypto.Decrypt(ctx.state.user._id, body.newPassword);
 
-    if (oldPsd === newPsd) ctx.throw(403, { error_key: 'newPsd', message: '新密码不能与原密码相同' });
+    if (oldPassword === newPassword) {
+      ctx.throw(403, { error_key: 'newPassword', message: '新密码不能与原密码相同' });
+    }
 
-    const verifyOldPsd = await ctx.compare(oldPsd, user.password);
-    if (!verifyOldPsd) ctx.throw(403, { error_key: 'oldPsd', message: '原密码错误' });
+    const verifyOldPassword = await ctx.compare(oldPassword, user.password);
+    if (!verifyOldPassword) {
+      ctx.throw(403, { error_key: 'oldPassword', message: '原密码错误' });
+    }
 
-    user.password = await ctx.genHash(newPsd);
+    user.password = await ctx.genHash(newPassword);
     await user.save();
 
     return '修改成功';
@@ -124,6 +135,13 @@ class AccountService extends Service {
 
     const { ctx } = this;
     const body = ctx.request.body;
+
+    if (body.nickname) {
+      const checkNickname = await ctx.model.User.findOne({ nickname: body.nickname });
+      if (checkNickname) {
+        ctx.throw(409, { error_key: 'nickname', message: '昵称已被占用' });
+      }
+    }
 
     let user = await ctx.model.User.findOne({ _id: ctx.state.user._id });
     user = Object.assign(user, body);
@@ -139,8 +157,9 @@ class AccountService extends Service {
         user.city = newTopic._id;
       }
     }
-    // console.log(user)
-    return await user.save();
+    await user.save();
+
+    return user;
 
   }
 
@@ -150,13 +169,17 @@ class AccountService extends Service {
     const { ctx } = this;
     const body = ctx.request.body;
 
-    if (!body.smscode) ctx.throw(403, { error_key: 'smscode', message: '验证码不能为空' });
+    if (!body.smscode) {
+      ctx.throw(403, { error_key: 'smscode', message: '验证码不能为空' });
+    }
     await ctx.service.sms.verify({ mobile: body.mobile, smscode: body.smscode });
     const user = await ctx.model.User.findOne({ mobile: body.mobile });
-    if (!user) ctx.throw(404, { error_key: 'mobile', message: '手机号未注册' });
+    if (!user) {
+      ctx.throw(404, { error_key: 'mobile', message: '手机号未注册' });
+    }
 
-    const newPsd = ctx.service.crypto.Decrypt(body.mobile, body.password);
-    user.password = await ctx.genHash(newPsd);
+    const newPassword = ctx.service.crypto.Decrypt(body.mobile, body.password);
+    user.password = await ctx.genHash(newPassword);
     await user.save();
 
     return '修改成功';

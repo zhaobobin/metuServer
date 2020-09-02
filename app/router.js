@@ -117,6 +117,8 @@ module.exports = app => {
   router.get('/api/v1/photos', controller.photos.list); // 列表
   router.get('/api/v1/photos/:id', check.photoExist, controller.photos.detail); // 详情
   router.get('/api/v1/photos/:id/state', check.photoExist, controller.photos.state); // 状态
+  router.get('/api/v1/photos/:id/prev', check.photoExist, controller.photos.prev); // 上一组
+  router.get('/api/v1/photos/:id/next', check.photoExist, controller.photos.next); // 下一组
   router.post('/api/v1/photos', auth, controller.photos.create); // 创建
   router.patch('/api/v1/photos/:id', auth, check.photoExist, controller.photos.patch); // 修改
   router.delete('/api/v1/photos/:id', auth, check.photoExist, controller.photos.del); // 删除 - 管理员操作
