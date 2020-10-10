@@ -53,9 +53,15 @@ class PhotoService extends Service {
     // 查询当前用户的关注、点赞、收藏状态
     if(ctx.state.user) {
       const me = await ctx.model.User.findById(ctx.state.user._id).select('+following +favoring_photos +collecting_photos')
-      if(me.following.map(id => id.toString()).includes(photo.author._id)) photo.following_state = 1
-      if(me.favoring_photos.map(id => id.toString()).includes(ctx.params.id)) photo.favoring_state = 1
-      if(me.collecting_photos.map(id => id.toString()).includes(ctx.params.id)) photo.collecting_state = 1
+      if(me.following.map(id => id.toString()).includes(photo.author._id)) {
+        photo.following_state = 1
+      }
+      if(me.favoring_photos.map(id => id.toString()).includes(ctx.params.id)) {
+        photo.favoring_state = 1
+      }
+      if(me.collecting_photos.map(id => id.toString()).includes(ctx.params.id)) {
+        photo.collecting_state = 1
+      }
     }
     return photo;
   }
@@ -72,9 +78,15 @@ class PhotoService extends Service {
     // 查询当前用户的关注、点赞、收藏状态
     if(ctx.state.user) {
       const me = await ctx.model.User.findById(ctx.state.user._id).select('+following +favoring_photos +collecting_photos')
-      if(me.following.map(id => id.toString()).includes(photo.author)) photo.following_state = 1
-      if(me.favoring_photos.map(id => id.toString()).includes(ctx.params.id)) photo.favoring_state = 1
-      if(me.collecting_photos.map(id => id.toString()).includes(ctx.params.id)) photo.collecting_state = 1
+      if(me.following.map(id => id.toString()).includes(photo.author)) {
+        photo.following_state = 1
+      }
+      if(me.favoring_photos.map(id => id.toString()).includes(ctx.params.id)) {
+        photo.favoring_state = 1
+      }
+      if(me.collecting_photos.map(id => id.toString()).includes(ctx.params.id)) {
+        photo.collecting_state = 1
+      }
     }
     delete photo._id;
     delete photo.author;
@@ -188,7 +200,8 @@ class PhotoService extends Service {
       .limit(perPage)
       .sort(sort)
       .exec();
-    return { list, count };
+    const hasMore = list.length === perPage;
+    return { list, count, hasMore };
   }
 
   // 收藏图片
@@ -233,7 +246,8 @@ class PhotoService extends Service {
       .limit(perPage)
       .sort(sort)
       .exec();
-    return { list, count };
+    const hasMore = list.length === perPage;
+    return { list, count, hasMore };
   }
 
   // 图片相关的评论列表
@@ -252,7 +266,8 @@ class PhotoService extends Service {
       .sort(sort)
       .populate('author')
       .exec();
-    return { list, count };
+    const hasMore = list.length === perPage;
+    return { list, count, hasMore };
   }
 
   async commentDetail() {

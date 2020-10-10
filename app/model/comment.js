@@ -62,7 +62,8 @@ module.exports = app => {
       .populate("author reply_to")
       .lean()
       .exec();
-    return { list, count };
+    const hasMore = list.length === perPage;
+    return { list, count, hasMore };
   };
 
   // 详情

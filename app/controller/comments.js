@@ -49,10 +49,17 @@ class CommentsController extends Controller {
     ctx.helper.success({ ctx });
   }
 
-  // 回复
+  // 回复评论
   async reply() {
     const { ctx } = this;
     const res = await ctx.service.comments.reply();
+    ctx.helper.success({ ctx, res });
+  }
+
+  // 评论的回复列表
+  async replyList() {
+    const { ctx } = this;
+    const res = await ctx.service.comments.replys();
     ctx.helper.success({ ctx, res });
   }
 

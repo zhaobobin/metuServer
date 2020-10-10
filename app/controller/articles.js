@@ -19,6 +19,27 @@ class ArticleController extends Controller {
     ctx.helper.success({ ctx, res });
   }
 
+  // 状态
+  async state() {
+    const { ctx } = this;
+    const res = await ctx.service.articles.state();
+    ctx.helper.success({ ctx, res });
+  }
+
+  // 上一组
+  async prev() {
+    const { ctx } = this;
+    const res = await ctx.service.articles.prev();
+    ctx.helper.success({ ctx, res });
+  }
+
+  // 下一组
+  async next() {
+    const { ctx } = this;
+    const res = await ctx.service.articles.next();
+    ctx.helper.success({ ctx, res });
+  }
+
   // 创建
   async create() {
     const { ctx } = this;

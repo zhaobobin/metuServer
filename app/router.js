@@ -63,7 +63,7 @@ module.exports = app => {
   router.get('/api/v1/users/:id/following/:category', controller.users.followingList); // 用户的关注列表
 
   // users - 用户的【点赞】：问题、文章、图片等
-  router.get('/api/v1/users/:id/favoring/:category', check.userExist, controller.users.favorList); // 点赞的问题列表
+  router.get('/api/v1/users/:id/favoring/:category', check.userExist, controller.users.favorList); // 点赞列表
 
   // users - 用户的【收藏】：问题、文章、图片等
   router.get('/api/v1/users/:id/collecting/:category', check.userExist, controller.users.collectList); // 收藏列表
@@ -95,6 +95,9 @@ module.exports = app => {
   // articles 增删改查
   router.get('/api/v1/articles', controller.articles.list); // 列表
   router.get('/api/v1/articles/:id', check.articleExist, controller.articles.detail); // 详情
+  router.get('/api/v1/articles/:id/state', check.articleExist, controller.articles.state); // 状态
+  router.get('/api/v1/articles/:id/prev', check.articleExist, controller.articles.prev); // 上一组
+  router.get('/api/v1/articles/:id/next', check.articleExist, controller.articles.next); // 下一组
   router.post('/api/v1/articles', auth, controller.articles.create); // 创建
   router.patch('/api/v1/articles/:id', auth, check.articleExist, controller.articles.patch); // 修改
   router.delete('/api/v1/articles/:id', auth, check.articleExist, controller.articles.del); // 删除 - 管理员操作
@@ -197,16 +200,16 @@ module.exports = app => {
   router.get('/api/v1/comments', controller.comments.list); // 所有评论
   router.get('/api/v1/comments/:comment_id', controller.comments.detail); // 评论详情
   router.delete('/api/v1/comments/:comment_id', auth, check.commentExist, controller.comments.del); // 删除评论 - 管理员操作
-  router.get('/api/v1/comments/:comment_id/reply', controller.comments.reply); // 评论的回复
+  router.get('/api/v1/comments/:comment_id/replys', controller.comments.replyList); // 评论的回复列表
 
   // comments 图片、文章的评论，example: router.get('/api/v1/photos/5dba799cec66a86c800e5de3/comments', controller.comments.list); // 评论列表
   router.get('/api/v1/:category/:detail_id/comments', controller.comments.list); // 评论列表
   router.get('/api/v1/:category/:detail_id/comments/:comment_id', controller.comments.detail); // 评论详情
-  router.get('/api/v1/:category/:detail_id/comments/:comment_id/state', controller.comments.detail); // 评论状态
+  router.get('/api/v1/:category/:detail_id/comments/:comment_id/state', controller.comments.state); // 评论状态
   router.post('/api/v1/:category/:detail_id/comments', auth, controller.comments.create); // 创建评论
   router.patch('/api/v1/:category/:detail_id/comments/:comment_id', auth, check.commentExist, controller.comments.patch); // 修改评论
   router.delete('/api/v1/:category/:detail_id/comments/:comment_id', auth, check.commentExist, controller.comments.del); // 删除评论
-  router.get('/api/v1/:category/:detail_id/comments/:comment_id/reply', controller.comments.reply); // 评论的回复
+  router.post('/api/v1/:category/:detail_id/comments/:comment_id/reply', controller.comments.reply); // 回复评论
 
   // comments - 评论的相关操作
   router.put('/api/v1/:category/:detail_id/comments/favoring/:comment_id', auth, check.commentExist, controller.comments.favor); // 点赞

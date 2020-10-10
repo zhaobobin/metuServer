@@ -8,9 +8,12 @@ class CommentsService extends Service {
     super(ctx);
     this.rule = {
       create: {
+        content: { type: 'string', required: true }
+      },
+      reply: {
         content: { type: 'string', required: true },
-        root_comment_id: { type: 'string', required: false }, // 二级评论
-        replayTo: { type: 'string', required: false }, // 二级评论
+        root_comment_id: { type: 'string', required: true }, // 二级评论
+        reply_to: { type: 'string', required: true }, // 二级评论
       },
       update: {
         content: { type: 'string', required: true },
@@ -21,16 +24,16 @@ class CommentsService extends Service {
   // 评论列表
   async list() {
     const { ctx } = this;
-    const list = await ctx.model.Comment.list(ctx.params, ctx.query)
+    const comments = await ctx.model.Comment.list(ctx.params, ctx.query)
     if(ctx.state.user){
       const me = await ctx.model.User.findById(ctx.state.user._id).select('favoring_comments');
-      for(let i in list) {
-        if(me.favoring_comments.map(id => id.toString()).includes(list[i]._id)) {
-          list[i].favoring_state = 1
+      for(const comment of comments.list) {
+        if(me.favoring_comments.map(id => id.toString()).includes(comment._id)) {
+          comment.favoring_state = 1
         }
       }
     }
-    return list;
+    return comments;
   }
 
   // 评论详情
@@ -73,19 +76,35 @@ class CommentsService extends Service {
     return res;
   }
 
-  // 创建：评论、回复
+  // 创建评论
   async create() {
     const { ctx } = this;
     ctx.validate(this.rule.create, ctx.request.body);
     const comment = await ctx.model.Comment.add(ctx);
     if (!comment) ctx.throw(422, { error_key: 'comment', message: '评论创建失败' });
-    const photo = await ctx.model.Photo.update(ctx.params.detail_id, { $inc: { comment_number: 1 } }); // 评论数+1
+    let res;
+    switch (ctx.params.category) {
+      case 'photos':
+        res = await ctx.model.Photo.update(ctx.params.detail_id, { $inc: { comment_number: 1 } }); // 评论数+1
+        break;
+      case 'articles':
+        res = await ctx.model.Article.update(ctx.params.detail_id, { $inc: { comment_number: 1 } }); // 评论数+1
+        break;
+      case 'questions':
+        res = await ctx.model.Question.update(ctx.params.detail_id, { $inc: { comment_number: 1 } }); // 评论数+1
+        break;
+      case 'answers':
+        res = await ctx.model.Answer.update(ctx.params.detail_id, { $inc: { comment_number: 1 } }); // 评论数+1
+        break;
+      default: break;
+    }
     await ctx.model.Message.add({
       type: 'comment',
       content: '评论',
       send_from: ctx.state.user._id,
-      send_to: photo.author,
-      photo_id: photo._id,
+      send_to: res.author,
+      detail_id: res._id,
+      category: ctx.params.category
     });
     return comment;
   }
@@ -107,18 +126,53 @@ class CommentsService extends Service {
     return res;
   }
 
-  // 查询评论的回复 - 备用
+  // 回复评论
   async reply() {
+    const { ctx } = this;
+    ctx.validate(this.rule.reply, ctx.request.body);
+    const comment = await ctx.model.Comment.add(ctx);
+    if (!comment) ctx.throw(422, { error_key: 'comment', message: '评论创建失败' });
+    let res;
+    switch (ctx.params.category) {
+      case 'photos':
+        res = await ctx.model.Photo.update(ctx.params.detail_id, { $inc: { comment_number: 1 } }); // 评论数+1
+        break;
+      case 'articles':
+        res = await ctx.model.Article.update(ctx.params.detail_id, { $inc: { comment_number: 1 } }); // 评论数+1
+        break;
+      case 'questions':
+        res = await ctx.model.Question.update(ctx.params.detail_id, { $inc: { comment_number: 1 } }); // 评论数+1
+        break;
+      case 'answers':
+        res = await ctx.model.Answer.update(ctx.params.detail_id, { $inc: { comment_number: 1 } }); // 评论数+1
+        break;
+      default: break;
+    }// 评论数+1
+    await ctx.model.Message.add({
+      type: 'comment',
+      content: '评论',
+      send_from: ctx.state.user._id,
+      send_to: ctx.request.body.reply_to,
+      detail_id: res._id,
+      category: ctx.params.category
+    });
+    return comment;
+  }
+
+  // 评论的回复列表
+  async replyList() {
     const { ctx } = this;
     const query = { root_comment_id: ctx.params.comment_id }
     return await ctx.model.Comment.list(ctx.params, query)
   }
 
-  // 点赞评论
+  // 点赞评论.
   async favor() {
     const { ctx } = this;
     const me = await ctx.model.User.findById(ctx.state.user._id).select('favoring_comments');
-    if (me.favoring_comments.map(id => id.toString()).includes(ctx.params.comment_id)) ctx.throw(403, { error_key: 'comment', message: '不能重复点赞' });
+    if (me.favoring_comments.map(id => id.toString()).includes(ctx.params.comment_id)) {
+      ctx.throw(403, { error_key: 'comment', message: '不能重复点赞' });
+    }
     me.favoring_comments.push(ctx.params.comment_id);
     me.save();
     const comment = await ctx.model.Comment.update(ctx.params.comment_id, { $inc: { favor_number: 1 } }); // 点赞数+1

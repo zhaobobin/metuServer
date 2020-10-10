@@ -34,9 +34,10 @@ class ArticleService extends Service {
       select: '+content +topics',
       populate: 'author topics',
     });
+    console.log(ctx.state.user)
     if (!article) ctx.throw(404, { error_key: 'article', message: '文章不存在' });
     // 查询当前用户的关注、点赞、收藏状态
-    if(ctx.state.user._id) {
+    if(ctx.state.user) {
       const me = await ctx.model.User.findById(ctx.state.user._id).select('+following +favoring_articles +collecting_articles')
       if(me.following.map(id => id.toString()).includes(article.author._id)) article.following = 1
       if(me.favoring_articles.map(id => id.toString()).includes(ctx.params.id)) article.favoring_state = 1
@@ -48,7 +49,7 @@ class ArticleService extends Service {
   // 状态
   async state() {
     const { ctx } = this;
-    const article = await ctx.model.Photo.detail({
+    const article = await ctx.model.Article.detail({
       id: ctx.params.id,
       select: 'author view_number favor_number collect_number comment_number editor status',
       populate: '',
@@ -64,6 +65,26 @@ class ArticleService extends Service {
     delete article._id;
     delete article.author;
     return article;
+  }
+
+  // 上一组
+  async prev() {
+    const { ctx } = this;
+
+    const list = await ctx.model.Article.find({ _id: { $gt: ctx.params.id } }).sort({ _id: 1 }).limit(1);
+    if (!list || list.length === 0) ctx.throw(404, { error_key: 'artilce', message: '已经没有了' });
+
+    return await this.detail(list[0]._id);
+  }
+
+  // 下一组
+  async next() {
+    const { ctx } = this;
+
+    const list = await ctx.model.Article.find({ _id: { $lt: ctx.params.id } }).sort({ _id: -1 }).limit(1);
+    if (!list || list.length === 0) ctx.throw(404, { error_key: 'article', message: '已经没有了' });
+
+    return await this.detail(list[0]._id);
   }
 
   // 创建

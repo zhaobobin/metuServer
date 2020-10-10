@@ -46,13 +46,12 @@ module.exports = app => {
     if (query.send_from) _filter.send_from = query.send_from;
     if (query.send_to) _filter.send_to = query.send_to;
     if (query.status) _filter.status = query.status;
-
     const count = await this.count(_filter);
     const list = await this.find(_filter)
       .skip(page * perPage)
       .limit(perPage)
       .sort(sort)
-      .populate('send_from')
+      .populate('send_from send_to')
       .exec();
     return { list, count };
     
