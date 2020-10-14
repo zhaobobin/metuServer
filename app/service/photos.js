@@ -171,7 +171,7 @@ class PhotoService extends Service {
       content: '点赞',
       send_from: ctx.state.user._id,
       send_to: photo.author,
-      article: photo._id,
+      photo: photo._id,
     });
     return photo;
   }
@@ -217,7 +217,7 @@ class PhotoService extends Service {
       content: '收藏',
       send_from: ctx.state.user._id,
       send_to: photo.author,
-      article: photo._id,
+      photo: photo._id,
     });
     return photo;
   }

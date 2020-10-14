@@ -10,16 +10,16 @@ module.exports = app => {
     {
       __v: { type: Number, select: false },
       content: { type: String, required: true }, // 内容
-      type: { type: String, required: true }, // 类型：follow、favor、comment、collect
+      type: { type: String, required: true }, // 类型：favor、follow、comment、collect
       send_from: { type: ObjectId, ref: 'User', required: true }, // 发送者
       send_to: { type: ObjectId, ref: 'User', required: true }, // 接收者
 
-      article_id: { type: ObjectId, ref: 'Article', select: false },
-      photo_id: { type: ObjectId, ref: 'Photo', select: false },
-      comment_id: { type: ObjectId, ref: 'Comment', select: false },
-      topic_id: { type: ObjectId, ref: 'Topic', select: false },
-      question_id: { type: ObjectId, ref: 'Question', select: false },
-      answer_id: { type: ObjectId, ref: 'Answer', select: false },
+      article: { type: ObjectId, ref: 'Article' },
+      photo: { type: ObjectId, ref: 'Photo' },
+      comment: { type: ObjectId, ref: 'Comment' },
+      topic: { type: ObjectId, ref: 'Topic' },
+      question: { type: ObjectId, ref: 'Question' },
+      answer: { type: ObjectId, ref: 'Answer' },
       
       readed: { type: Number, default: 0, enum: [ 0, 1 ] }, // 已读
       status: { type: Number, default: 1, enum: [ 0, 1 ] }, // 状态
@@ -46,20 +46,31 @@ module.exports = app => {
     if (query.send_from) _filter.send_from = query.send_from;
     if (query.send_to) _filter.send_to = query.send_to;
     if (query.status) _filter.status = query.status;
+    let populate = '';
+    switch(query.type) {
+      case 'favor': populate = 'send_from send_to article photo comment question answer'; break;
+      case 'follow': populate = 'send_from send_to topic'; break;
+      case 'comment': populate = 'send_from send_to article photo'; break;
+      case 'collect': populate = 'send_from send_to article photo'; break;
+      default: populate = 'send_from send_to'; break;
+    }
     const count = await this.count(_filter);
     const list = await this.find(_filter)
       .skip(page * perPage)
       .limit(perPage)
       .sort(sort)
-      .populate('send_from send_to')
+      .populate(populate)
       .exec();
-    return { list, count };
+    const hasMore = list.length === perPage;
+    return { list, count, hasMore };
     
   };
 
   // 详情
   MessageSchema.statics.detail = async function({ id, select, populate }) {
-    return await this.findById(id).select(select).populate(populate);
+    return await this.findByIdAndUpdate(id, { $inc: { readed: 1 } }, { new: true }) // 标记为已读
+    .select(select)
+    .populate(populate);
   };
 
   // 创建

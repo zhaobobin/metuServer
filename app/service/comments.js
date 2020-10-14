@@ -82,30 +82,34 @@ class CommentsService extends Service {
     ctx.validate(this.rule.create, ctx.request.body);
     const comment = await ctx.model.Comment.add(ctx);
     if (!comment) ctx.throw(422, { error_key: 'comment', message: '评论创建失败' });
+    const newMessage = {
+      type: 'comment',
+      content: '评论',
+      send_from: ctx.state.user._id,
+      category: ctx.params.category
+    }
     let res;
     switch (ctx.params.category) {
       case 'photos':
         res = await ctx.model.Photo.update(ctx.params.detail_id, { $inc: { comment_number: 1 } }); // 评论数+1
+        newMessage['photo'] = res._id;
         break;
       case 'articles':
         res = await ctx.model.Article.update(ctx.params.detail_id, { $inc: { comment_number: 1 } }); // 评论数+1
+        newMessage['article'] = res._id;
         break;
       case 'questions':
         res = await ctx.model.Question.update(ctx.params.detail_id, { $inc: { comment_number: 1 } }); // 评论数+1
+        newMessage['question'] = res._id;
         break;
       case 'answers':
         res = await ctx.model.Answer.update(ctx.params.detail_id, { $inc: { comment_number: 1 } }); // 评论数+1
+        newMessage['answer'] = res._id;
         break;
       default: break;
     }
-    await ctx.model.Message.add({
-      type: 'comment',
-      content: '评论',
-      send_from: ctx.state.user._id,
-      send_to: res.author,
-      detail_id: res._id,
-      category: ctx.params.category
-    });
+    newMessage['send_to'] = res.author;
+    await ctx.model.Message.add(newMessage);
     return comment;
   }
 
@@ -132,30 +136,34 @@ class CommentsService extends Service {
     ctx.validate(this.rule.reply, ctx.request.body);
     const comment = await ctx.model.Comment.add(ctx);
     if (!comment) ctx.throw(422, { error_key: 'comment', message: '评论创建失败' });
-    let res;
-    switch (ctx.params.category) {
-      case 'photos':
-        res = await ctx.model.Photo.update(ctx.params.detail_id, { $inc: { comment_number: 1 } }); // 评论数+1
-        break;
-      case 'articles':
-        res = await ctx.model.Article.update(ctx.params.detail_id, { $inc: { comment_number: 1 } }); // 评论数+1
-        break;
-      case 'questions':
-        res = await ctx.model.Question.update(ctx.params.detail_id, { $inc: { comment_number: 1 } }); // 评论数+1
-        break;
-      case 'answers':
-        res = await ctx.model.Answer.update(ctx.params.detail_id, { $inc: { comment_number: 1 } }); // 评论数+1
-        break;
-      default: break;
-    }// 评论数+1
-    await ctx.model.Message.add({
+    const newMessage = {
       type: 'comment',
       content: '评论',
       send_from: ctx.state.user._id,
       send_to: ctx.request.body.reply_to,
-      detail_id: res._id,
       category: ctx.params.category
-    });
+    }
+    let res;
+    switch (ctx.params.category) {
+      case 'photos':
+        res = await ctx.model.Photo.update(ctx.params.detail_id, { $inc: { comment_number: 1 } }); // 评论数+1
+        newMessage['photo'] = res._id;
+        break;
+      case 'articles':
+        res = await ctx.model.Article.update(ctx.params.detail_id, { $inc: { comment_number: 1 } }); // 评论数+1
+        newMessage['article'] = res._id;
+        break;
+      case 'questions':
+        res = await ctx.model.Question.update(ctx.params.detail_id, { $inc: { comment_number: 1 } }); // 评论数+1
+        newMessage['question'] = res._id;
+        break;
+      case 'answers':
+        res = await ctx.model.Answer.update(ctx.params.detail_id, { $inc: { comment_number: 1 } }); // 评论数+1
+        newMessage['answer'] = res._id;
+        break;
+      default: break;
+    }
+    await ctx.model.Message.add(newMessage);
     return comment;
   }
 
@@ -181,7 +189,7 @@ class CommentsService extends Service {
       content: '点赞',
       send_from: ctx.state.user._id,
       send_to: comment.author,
-      comment_id: comment._id,
+      comment: comment._id,
     });
     return comment;
   }

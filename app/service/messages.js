@@ -30,10 +30,10 @@ class MessagesService extends Service {
   // 详情
   async detail() {
     const { ctx } = this;
-    const res = await ctx.model.Comment.detail({
+    const res = await ctx.model.Message.detail({
       id: ctx.params.id,
       select: this.select,
-      populate: 'send_from',
+      populate: 'send_from send_to',
     });
     if (!res) ctx.throw(404, { error_key: 'message', message: '消息不存在' });
     return res;
