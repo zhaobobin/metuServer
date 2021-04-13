@@ -21,6 +21,7 @@ module.exports = app => {
   router.post('/api/v1/user/register', controller.access.register);
   router.post('/api/v1/user/emailcode', controller.access.emailcode); // 邮箱验证码
   router.post('/api/v1/user/smscode', controller.access.smscode); // 短信验证码
+  router.post('/api/v1/user/checkSmscode', controller.access.checkSmscode); // 短信验证码
   router.post('/api/v1/user/login', controller.access.login);
   router.post('/api/v1/user/token', auth, controller.access.token);
   router.post('/api/v1/user/logout', auth, controller.access.logout);
@@ -221,6 +222,7 @@ module.exports = app => {
   // cricles 增删改查
   router.get('/api/v1/circles', controller.circles.list); // 列表
   router.get('/api/v1/circles/:id', check.circleExist, controller.circles.detail); // 详情
+  router.get('/api/v1/circles/:id/checkJoinStatus/:user_id', controller.circles.checkJoinStatus); // 检查加入状态
   router.post('/api/v1/circles', auth, controller.circles.create); // 创建
   router.patch('/api/v1/circles/:id', auth, check.circleExist, controller.circles.patch); // 修改
   router.delete('/api/v1/circles/:id', auth, check.circleExist, controller.circles.del); // 删除

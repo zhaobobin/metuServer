@@ -48,9 +48,6 @@ module.exports = app => {
       weibo_uid: { type: String, select: false },												// 微博，保存用户id，与weibo模型进行匹配
       qq_openid: { type: String, select: false },												// QQ，保存用户openid，与qq模型进行匹配
 
-      /* 加入的圈子 */
-      circles: { type: [{ type: ObjectId, ref: 'Circle' }], select: false }, // 圈子
-
       /* 用户的关注 */
       following: { type: [{ type: ObjectId, ref: 'User' }], select: false }, // 关注的用户
       followers: { type: [{ type: ObjectId, ref: 'User' }], select: false }, // 用户的粉丝
@@ -62,6 +59,7 @@ module.exports = app => {
       following_questions: { type: [{ type: ObjectId, ref: 'Question' }], select: false }, // 关注的问题
       following_answers: { type: [{ type: ObjectId, ref: 'Answer' }], select: false }, // 关注的回答
       following_topics: { type: [{ type: ObjectId, ref: 'Topic' }], select: false }, // 关注的话题
+      following_circles: { type: [{ type: ObjectId, ref: 'Circle' }], select: false }, // 关注(加入)的圈子
 
       /* 用户的点赞 */
       favoring_photos: { type: [{ type: ObjectId, ref: 'Photo' }], select: false }, // 点赞的图片

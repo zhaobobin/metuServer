@@ -74,7 +74,9 @@ class SmsService extends Service {
       TemplateCode: 'SMS_140550479', // 必填:短信模板-可在短信控制台中找到，发送国际/港澳台消息时，请使用国际/港澳台短信模版
       TemplateParam: JSON.stringify({ code: smscode }),
     });
-    if (!res) ctx.throw(422, { error_key: 'smscode', message: '发送失败，请稍后再试' });
+    if (!res) {
+      ctx.throw(422, { error_key: 'smscode', message: '发送失败，请稍后再试' });
+    }
 
     const newSms = new ctx.model.Sms({
       mobile: mobile,
@@ -87,7 +89,16 @@ class SmsService extends Service {
 
   // 检测短信验证码
   async checkSmscode() {
-
+    const { ctx } = this;
+    const res = await ctx.model.Sms.findOne({ mobile: ctx.request.body.mobile, code: ctx.request.body.smscode });
+    if (!res) {
+      ctx.throw(422, { error_key: 'smscode', message: '验证码错误' });
+    }
+    const time = new Date().getTime() - new Date(res.create_at).getTime();
+    if (time > 300 * 1000) {
+      ctx.throw(422, { error_key: 'smscode', message: '验证码已过期' });
+    }
+    return '验证成功';
   }
 
   // 检查短信验证码，5分钟过期

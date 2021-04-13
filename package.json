@@ -44,7 +44,7 @@
     "node": ">=10.0.0"
   },
   "scripts": {
-    "start": "egg-scripts start --daemon --title=egg-server-metuServer",
+    "start": "egg-scripts start EGG_SERVER_ENV=prod --daemon --title=egg-server-metuServer",
     "stop": "egg-scripts stop --title=egg-server-metuServer",
     "dev": "egg-bin dev NODE_ENV=development",
     "debug": "egg-bin debug",

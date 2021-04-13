@@ -42,11 +42,18 @@ class CircleController extends Controller {
     ctx.helper.success({ ctx });
   }
 
+  // 检查加入状态
+  async checkJoinStatus() {
+    const { ctx } = this;
+    const following_state = await ctx.service.circles.checkJoinStatus();
+    ctx.helper.success({ ctx, res: { following_state },  message: '查询成功' });
+  }
+
   // 加入
   async join() {
     const { ctx } = this;
-    const res = await ctx.service.circles.join();
-    ctx.helper.success({ ctx, res: res._id,  message: '申请成功' });
+    const circle = await ctx.service.circles.join();
+    ctx.helper.success({ ctx, res: { following_state: 1, member_number: circle.member_number },  message: '申请成功' });
   }
 
   // 审核
@@ -60,8 +67,8 @@ class CircleController extends Controller {
   // 退出
   async exit() {
     const { ctx } = this;
-    const res = await ctx.service.circles.exit();
-    ctx.helper.success({ ctx, res: res._id, message: '申请成功' });
+    const circle = await ctx.service.circles.exit();
+    ctx.helper.success({ ctx, res: { following_state: 0, member_number: circle.member_number }, message: '退出成功' });
   }
 
   // 成员列表

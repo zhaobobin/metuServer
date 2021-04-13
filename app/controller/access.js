@@ -54,6 +54,13 @@ class AccessController extends Controller {
     ctx.helper.success({ ctx, message });
   }
 
+  // 检查短信验证码
+  async checkSmscode() {
+    const { ctx } = this;
+    const message = await ctx.service.sms.checkSmscode();
+    ctx.helper.success({ ctx, message });
+  }
+
   // 用户登出
   async logout() {
     const { ctx } = this;

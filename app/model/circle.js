@@ -15,6 +15,7 @@ module.exports = app => {
 
       admin: { type: ObjectId, ref: 'User', select: false }, // 管理者
       audit: { type: [{ type: ObjectId, ref: 'User' }], select: false }, // 待审核成员 - 通过后正式加入圈子
+      require_audit: { type: Boolean, default: 0 }, // 需要审核
 
       activitys: { type: [{ type: ObjectId, ref: 'Activity' }], select: false }, // 活动
       photos: { type: [{ type: ObjectId, ref: 'Photo' }], select: false }, // 影集
@@ -73,7 +74,7 @@ module.exports = app => {
 
   // 详情
   CircleSchema.statics.detail = async function({ id, select }) {
-    return await this.findById(id).select(select);
+    return await this.findById(id).select(select).lean();
   };
 
   // 创建
