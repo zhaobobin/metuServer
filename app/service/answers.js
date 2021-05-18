@@ -89,7 +89,7 @@ class AnswersService extends Service {
       perPage = Math.max(per_page, 1), // 每页数量
       sort = query.sort ? query.sort : { _id: 1 };
     const _filter = { favoring_answers: ctx.params.id };
-    const count = await ctx.model.User.count(_filter);
+    const count = await ctx.model.User.countDocuments(_filter);
     const list = await ctx.model.User.find(_filter)
       .skip(page * perPage)
       .limit(perPage)
@@ -133,7 +133,7 @@ class AnswersService extends Service {
       perPage = Math.max(per_page, 1), // 每页数量
       sort = query.sort ? query.sort : { _id: 1 };
     const _filter = { collecting_answers: ctx.params.id };
-    const count = await ctx.model.User.count(_filter);
+    const count = await ctx.model.User.countDocuments(_filter);
     const list = await ctx.model.User.find(_filter)
       .skip(page * perPage)
       .limit(perPage)

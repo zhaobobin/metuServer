@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const Server = require('./server');
+const Server = require("./server");
 // const path = require('path');
 
 /**
@@ -8,7 +8,7 @@ const Server = require('./server');
  * @param appInfo
  * @returns {{myAppName: string}}
  */
-module.exports = appInfo => {
+module.exports = (appInfo) => {
   /**
    * built-in config
    * @type {Egg.EggAppConfig}
@@ -16,12 +16,12 @@ module.exports = appInfo => {
   const exports = {};
 
   // use for cookie sign key, should change to your own and keep security
-  exports.keys = appInfo.name + '_1563859398850_5245';
+  exports.keys = appInfo.name + "_1563859398850_5245";
 
   // add your middleware config here
-  exports.middleware = [ 'getToken', 'errorHandler' ];
+  exports.middleware = ["getToken", "errorHandler"];
   exports.errorHandler = {
-    match: '/api', // 只对 /api 前缀的 url 路径生效
+    match: "/api", // 只对 /api 前缀的 url 路径生效
   };
 
   // 安全
@@ -29,26 +29,43 @@ module.exports = appInfo => {
     csrf: {
       enable: false,
     },
-    domainWhiteList: [ 'http://localhost:8000', 'http://localhost:8001' ],
+    domainWhiteList: ["http://localhost:8000", "http://localhost:8001"],
   };
   exports.cors = {
-    origin: '*',
-    allowMethods: 'GET,POST,PUT,PATCH,DELETE,HEAD',
+    origin: "*",
+    allowMethods: "GET,POST,PUT,PATCH,DELETE,HEAD",
   };
   exports.multipart = {
-    fileExtensions: [ '.apk', '.pptx', '.docx', '.csv', '.doc', '.ppt', '.pdf', '.pages', '.wav', '.mov' ], // 增加对 .apk 扩展名的支持
+    fileExtensions: [
+      ".apk",
+      ".pptx",
+      ".docx",
+      ".csv",
+      ".doc",
+      ".ppt",
+      ".pdf",
+      ".pages",
+      ".wav",
+      ".mov",
+    ], // 增加对 .apk 扩展名的支持
   };
 
   // Json限制
   exports.bodyParser = {
-    jsonLimit: '2mb',
-    formLimit: '2mb',
+    jsonLimit: "2mb",
+    formLimit: "2mb",
   };
 
   // mongodb
   exports.mongoose = {
-    url: process.env.NODE_ENV === 'development' ? Server.db.test : Server.db.dev,
-    options: { useFindAndModify: false, useCreateIndex: true },
+    url:
+      process.env.NODE_ENV === "development" ? Server.db.test : Server.db.dev,
+    options: {
+      useFindAndModify: false,
+      useUnifiedTopology: true,
+      useNewUrlParser: true,
+      useCreateIndex: true,
+    },
     plugins: [],
   };
   exports.bcrypt = {
@@ -66,8 +83,7 @@ module.exports = appInfo => {
   // };
 
   // add your user config here
-  exports.myAppName = 'metuServer';
+  exports.myAppName = "metuServer";
 
   return exports;
-
 };

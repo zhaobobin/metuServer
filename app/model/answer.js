@@ -37,7 +37,7 @@ module.exports = app => {
       questionId,
       content: new RegExp(query.q), // 正则匹配内容
     };
-    const count = await this.count(_filter);
+    const count = await this.countDocuments(_filter);
     const list = await this.find(_filter)
       .skip(page * perPage)
       .limit(perPage)

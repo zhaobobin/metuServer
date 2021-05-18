@@ -56,7 +56,7 @@ class RoleService extends Service {
           .limit(Number(pageSize))
           .sort({ createdAt: -1 })
           .exec();
-        count = await this.ctx.model.Role.count({}).exec();
+        count = await this.ctx.model.Role.countDocuments({}).exec();
       }
     } else {
       if (search) {
@@ -66,7 +66,7 @@ class RoleService extends Service {
         count = res.length;
       } else {
         res = await this.ctx.model.Role.find({}).sort({ createdAt: -1 }).exec();
-        count = await this.ctx.model.Role.count({}).exec();
+        count = await this.ctx.model.Role.countDocuments({}).exec();
       }
     }
     // 整理数据源 -> Ant Design Pro

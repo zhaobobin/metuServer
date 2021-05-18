@@ -54,7 +54,7 @@ module.exports = app => {
       case 'answers': _filter.answer_id = params.detail_id; break;
       default: break;
     }
-    const count = await this.count(_filter);
+    const count = await this.countDocuments(_filter);
     const list = await this.find(_filter)
       .skip(page * perPage)
       .limit(perPage)

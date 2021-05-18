@@ -98,7 +98,7 @@ class TopicService extends Service {
       perPage = Math.max(per_page, 1), // 每页数量
       sort = query.sort ? query.sort : { _id: 1 };
     const _filter = { following_topics: ctx.params.id };
-    const count = await ctx.model.User.count(_filter);
+    const count = await ctx.model.User.countDocuments(_filter);
     const list = await ctx.model.User.find(_filter)
       .skip(page * perPage)
       .limit(perPage)
@@ -116,7 +116,7 @@ class TopicService extends Service {
       perPage = Math.max(per_page, 1), // 每页数量
       sort = query.sort ? query.sort : { _id: 1 };
     const _filter = { topics: ctx.params.id };
-    const count = await ctx.model.Article.count(_filter);
+    const count = await ctx.model.Article.countDocuments(_filter);
     const list = await ctx.model.Article.find(_filter)
       .skip(page * perPage)
       .limit(perPage)
@@ -134,7 +134,7 @@ class TopicService extends Service {
       perPage = Math.max(per_page, 1), // 每页数量
       sort = query.sort ? query.sort : { _id: 1 };
     const _filter = { topics: ctx.params.id };
-    const count = await ctx.model.Question.count(_filter);
+    const count = await ctx.model.Question.countDocuments(_filter);
     const list = await ctx.model.Question.find(_filter)
       .skip(page * perPage)
       .limit(perPage)

@@ -63,7 +63,7 @@ module.exports = app => {
         $lt: query.endTime,
       };
     }
-    const count = await this.count(_filter);
+    const count = await this.countDocuments(_filter);
     const list = await this.find(_filter)
       .skip(page * perPage)
       .limit(perPage)

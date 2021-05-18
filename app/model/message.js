@@ -54,7 +54,7 @@ module.exports = app => {
       case 'collect': populate = 'send_from send_to article photo'; break;
       default: populate = 'send_from send_to'; break;
     }
-    const count = await this.count(_filter);
+    const count = await this.countDocuments(_filter);
     const list = await this.find(_filter)
       .skip(page * perPage)
       .limit(perPage)

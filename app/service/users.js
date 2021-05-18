@@ -259,7 +259,7 @@ class UserService extends Service {
       perPage = Math.max(per_page, 1), // 每页数量
       sort = query.sort ? query.sort : { _id: -1 };
     const _filter = { author: ctx.params.id };
-    const count = await ctx.model.Photo.count(_filter);
+    const count = await ctx.model.Photo.countDocuments(_filter);
     const list = await ctx.model.Photo.find(_filter)
       .skip(page * perPage)
       .limit(perPage)
@@ -277,7 +277,7 @@ class UserService extends Service {
       perPage = Math.max(per_page, 1), // 每页数量
       sort = query.sort ? query.sort : { _id: -1 };
     const _filter = { author: ctx.params.id };
-    const count = await ctx.model.Image.count(_filter);
+    const count = await ctx.model.Image.countDocuments(_filter);
     const list = await ctx.model.Image.find(_filter)
       .skip(page * perPage)
       .limit(perPage)
@@ -296,7 +296,7 @@ class UserService extends Service {
       perPage = Math.max(per_page, 1), // 每页数量
       sort = query.sort ? query.sort : { _id: -1 };
     const _filter = { author: ctx.params.id };
-    const count = await ctx.model.Article.count(_filter);
+    const count = await ctx.model.Article.countDocuments(_filter);
     const list = await ctx.model.Article.find(_filter)
       .skip(page * perPage)
       .limit(perPage)
@@ -315,7 +315,7 @@ class UserService extends Service {
       perPage = Math.max(per_page, 1), // 每页数量
       sort = query.sort ? query.sort : { _id: -1 };
     const _filter = { questioner: ctx.params.id };
-    const count = await ctx.model.Question.count(_filter);
+    const count = await ctx.model.Question.countDocuments(_filter);
     const list = await ctx.model.Question.find(_filter)
       .skip(page * perPage)
       .limit(perPage)
@@ -333,7 +333,7 @@ class UserService extends Service {
       perPage = Math.max(per_page, 1), // 每页数量
       sort = query.sort ? query.sort : { _id: -1 };
     const _filter = { answerer: ctx.params.id };
-    const count = await ctx.model.Answer.count(_filter);
+    const count = await ctx.model.Answer.countDocuments(_filter);
     const list = await ctx.model.Answer.find(_filter)
       .skip(page * perPage)
       .limit(perPage)
@@ -353,7 +353,7 @@ class UserService extends Service {
       perPage = Math.max(per_page, 1), // 每页数量
       sort = query.sort ? query.sort : { _id: -1 };
     const _filter = { members: ctx.params.id };
-    const count = await ctx.model.Cricle.count(_filter);
+    const count = await ctx.model.Cricle.countDocuments(_filter);
     const list = await ctx.model.Cricle.find(_filter)
       .skip(page * perPage)
       .limit(perPage)
