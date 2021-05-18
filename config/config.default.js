@@ -48,7 +48,7 @@ module.exports = appInfo => {
   // mongodb
   exports.mongoose = {
     url: process.env.NODE_ENV === 'development' ? Server.db.test : Server.db.dev,
-    options: { useFindAndModify: false },
+    options: { useFindAndModify: false, useCreateIndex: true },
     plugins: [],
   };
   exports.bcrypt = {
