@@ -61,7 +61,7 @@ module.exports = (appInfo) => {
     url:
       process.env.NODE_ENV === "development" ? Server.db.test : Server.db.dev,
     options: {
-      useUnifiedTopology: true,
+      useFindAndModify: false,
       useNewUrlParser: true
     },
     plugins: [],
