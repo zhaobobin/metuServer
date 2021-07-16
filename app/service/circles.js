@@ -24,6 +24,31 @@ class CircleService extends Service {
     return await ctx.model.Circle.list(ctx.query);
   }
 
+  // 热门圈子
+  async popularCircle() {
+    const { ctx } = this;
+  }
+
+  // 兴趣圈子
+  async interestCircle() {
+    const { ctx } = this;
+  }
+
+  // 学习圈子
+  async learnCircle() {
+    const { ctx } = this;
+  }
+
+  // 校园圈子
+  async campusCircle() {
+    const { ctx } = this;
+  }
+
+  // 地域圈子
+  async regionCircle() {
+
+  }
+
   // 详情
   async detail() {
     const { ctx } = this;
@@ -134,7 +159,7 @@ class CircleService extends Service {
     const index = circle.audit.map(id => id.toString()).indexOf(user_id);
     if (index < 0) ctx.throw(403, { error_key: 'circle', message: '不能重复审核' });
     circle.audit.splice(index, 1);
-    
+
     // 更新User
     const user = await ctx.model.User.findById(user_id).select('following_circles');
     user.following_circles.push(ctx.params.id);
@@ -180,7 +205,7 @@ class CircleService extends Service {
   // 成员详情
   async memberDetail() {
     const { ctx } = this;
-    
+
   }
 
 }

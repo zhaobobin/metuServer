@@ -12,6 +12,7 @@ module.exports = app => {
       name: { type: String, required: true }, // 圈子名称
       avatar_url: { type: String }, // 圈子图标
       description: { type: String }, // 圈子描述
+      category: { type: String }, // 圈子分类: interest兴趣圈 | learn学习圈 | campus校区圈 | region地域圈
 
       admin: { type: ObjectId, ref: 'User', select: false }, // 管理者
       audit: { type: [{ type: ObjectId, ref: 'User' }], select: false }, // 待审核成员 - 通过后正式加入圈子

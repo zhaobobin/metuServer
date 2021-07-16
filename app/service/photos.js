@@ -145,6 +145,20 @@ class PhotoService extends Service {
   async update() {
     const { ctx } = this;
     ctx.validate(this.rule.update, ctx.request.body);
+    // 保存图片
+    let ids = [];
+    const images = ctx.request.body.images;
+    for(let i in images){
+      if(images[i]._id){
+        ids.push(images[i]._id)
+      } else {
+        images[i].author = ctx.state.user._id;
+        const createImage = new ctx.model.Image(images[i]);
+        const image = await createImage.save();
+        ids.push(image._id)
+      }
+    }
+    ctx.request.body.images = ids;
     const res = await ctx.model.Photo.update(ctx.params.id, ctx.request.body);
     if (!res) ctx.throw(404, { error_key: 'photo', message: '图片不存在' });
     return res;
