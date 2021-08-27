@@ -55,11 +55,9 @@ module.exports = (appInfo) => {
     jsonLimit: "2mb",
     formLimit: "2mb",
   };
-
   // mongodb
   exports.mongoose = {
-    url:
-      process.env.NODE_ENV === "development" ? Server.db.test : Server.db.dev,
+    url: Server.db.test,
     options: {
       useFindAndModify: false,
       useNewUrlParser: true

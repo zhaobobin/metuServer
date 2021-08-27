@@ -345,7 +345,7 @@ class UserService extends Service {
 
   /* ----------------------> 圈子 <---------------------- */
   // 用户的圈子列表
-  async criclesList() {
+  async circlesList() {
     const { ctx } = this;
     const query = ctx.query;
     const { per_page = 10 } = query,
@@ -353,8 +353,8 @@ class UserService extends Service {
       perPage = Math.max(per_page, 1), // 每页数量
       sort = query.sort ? query.sort : { _id: -1 };
     const _filter = { members: ctx.params.id };
-    const count = await ctx.model.Cricle.countDocuments(_filter);
-    const list = await ctx.model.Cricle.find(_filter)
+    const count = await ctx.model.Circle.countDocuments(_filter);
+    const list = await ctx.model.Circle.find(_filter)
       .skip(page * perPage)
       .limit(perPage)
       .sort(sort)

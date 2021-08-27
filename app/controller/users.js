@@ -126,9 +126,9 @@ class UserController extends Controller {
   /* ----------------------> 用户的发布 end! <---------------------- */
 
   // 用户的圈子列表
-  async criclesList() {
+  async circlesList() {
     const { ctx } = this;
-    const res = await ctx.service.users.criclesList();
+    const res = await ctx.service.users.circlesList();
     ctx.helper.success({ ctx, res });
   }
 

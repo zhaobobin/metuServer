@@ -77,7 +77,7 @@ module.exports = app => {
   router.get('/api/v1/users/:id/answers', check.userExist, controller.users.answersList); // 用户的回答列表
 
   // users - 用户的【圈子】
-  router.get('/api/v1/users/:id/cricles', check.userExist, controller.users.criclesList); // 用户的圈子列表
+  router.get('/api/v1/users/:id/circles', check.userExist, controller.users.circlesList); // 用户的圈子列表
 
   /* ----------------------> 【用户】 end! <---------------------- */
 
