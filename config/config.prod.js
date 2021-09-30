@@ -4,7 +4,7 @@ const defaultConfig = require("./config.default");
 const Server = require("./server");
 
 defaultConfig.mongoose = {
-  url: Server.db.dev,
+  url: Server.db.prod,
   options: {
     useFindAndModify: false,
     useNewUrlParser: true

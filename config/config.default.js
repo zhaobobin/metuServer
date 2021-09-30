@@ -57,10 +57,11 @@ module.exports = (appInfo) => {
   };
   // mongodb
   exports.mongoose = {
-    url: Server.db.test,
+    url: Server.db.pro,
     options: {
       useFindAndModify: false,
-      useNewUrlParser: true
+      useNewUrlParser: true,
+      // useCreateIndex: true
     },
     plugins: [],
   };
